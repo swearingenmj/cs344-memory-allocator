@@ -11,12 +11,32 @@
 // make linked list inside the above data space
 struct block *head = NULL;  // Head of the list, empty
 
-int main(void){ 
-    void *p;
+struct block {
+        struct block *next;
+        int size;     // Bytes
+        int in_use;   // Boolean
+} block;
 
-    print_data();
-    p = myalloc(64);
-    print_data();
+void print_data(void) {
+    struct block *b = head;
+
+    if (b == NULL) {
+        printf("[empty]\n");
+        return;
+    }
+
+    while (b != NULL) {
+        // Uncomment the following line if you want to see the pointer values
+        //printf("[%p:%d,%s]", b, b->size, b->in_use? "used": "free");
+        printf("[%d,%s]", b->size, b->in_use? "used": "free");
+        if (b->next != NULL) {
+            printf(" -> ");
+        }
+
+        b = b->next;
+    }
+
+    printf("\n");
 }
 
 void *myalloc(int size) {
@@ -45,7 +65,7 @@ void *myalloc(int size) {
     struct block *current, *previous;
     int padded_block_size;
 
-    while (((current->size) < size) || ((current->in_use) == 1) && (current->next != NULL)) {
+    while (((current->size) < size) || (((current->in_use) == 1) && (current->next != NULL))) {
         previous = current;
         current = current->next;
     }
@@ -70,30 +90,10 @@ void *myalloc(int size) {
     return PTR_OFFSET(current, padded_block_size);
 }
 
-struct block {
-        struct block *next;
-        int size;     // Bytes
-        int in_use;   // Boolean
-};
+int main(void){ 
+    void *p;
 
-void print_data(void) {
-    struct block *b = head;
-
-    if (b == NULL) {
-        printf("[empty]\n");
-        return;
-    }
-
-    while (b != NULL) {
-        // Uncomment the following line if you want to see the pointer values
-        //printf("[%p:%d,%s]", b, b->size, b->in_use? "used": "free");
-        printf("[%d,%s]", b->size, b->in_use? "used": "free");
-        if (b->next != NULL) {
-            printf(" -> ");
-        }
-
-        b = b->next;
-    }
-
-    printf("\n");
+    print_data();
+    p = myalloc(64);
+    print_data();
 }
