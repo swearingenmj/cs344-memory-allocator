@@ -20,12 +20,12 @@ int main(void){
 }
 
 void *myalloc(int size) {
-    
+
     // use sbrk to allocate a chunk of data space
     // node information:
-            // in-use?
-            // size of allocated memory region
-            // pointer to the next memory region
+        // in-use(true or false)?
+        // size of allocated memory region
+        // pointer to the next memory region
 
     if (head == NULL) {
         head = sbrk(1024);
@@ -40,21 +40,34 @@ void *myalloc(int size) {
     //         mark n as used
     //         return address of n's data
 
-    //cries into code.. 
+    //http://tharikasblogs.blogspot.com/p/how-to-write-your-own-malloc-and-free.html
 
-    // if there was no room
-    // return NULL
-    return NULL;
+    struct block *current, *previous;
+    int padded_block_size;
+
+    while (((current->size) < size) || ((current->in_use) == 1) && (current->next != NULL)) {
+        previous = current;
+        current = current->next;
+    }
+
+    if ((current->size) == size) {
+        current->in_use = 1;
+    } else if ((current->size) > size) {
+        current->in_use = 1;
+    } else {
+        // if there was no room
+        // return NULL
+        return NULL;
+    }
 
     // what we are returning:
     // malloc will return a pointer to the data.. NOT a pointer to the struct block
     // the data start at n bytes past the struct, where n is PADDED_SIZE(sizeof(struct block))
     // padded_struct_block_size = PADDED_SIZE(sizeof(struct block));
 
-    // struct block *cur;
     // ... All the machinations to allocate go here ...
-    // padded_block_size = PADDED_SIZE(sizeof(struct block));
-    // return PTR_OFFSET(cur, padded_block_size);
+    padded_block_size = PADDED_SIZE(sizeof(struct block));
+    return PTR_OFFSET(current, padded_block_size);
 }
 
 struct block {
@@ -84,19 +97,3 @@ void print_data(void) {
 
     printf("\n");
 }
-
-#if 0
-    In myalloc() allocate a certain number of bytes and return a pointer
-        a. call sbrk() to get space
-        b. build a linked-list node inside the space to indicate the
-            size and 'in-use' status
-        c. walk the linked list in a loop to look for the first node that is:
-            i. not in use
-            ii. big enough to hold the requested amount+padding
-        d. if the block is found:
-            i. mark it 'in-use'
-            ii. return a pointer to the user data just after the linked
-                list node+padding
-        e. if no block is found:
-            i. return NULL
-#endif
