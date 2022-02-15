@@ -64,7 +64,6 @@ void *myalloc(int size) {
         //http://tharikasblogs.blogspot.com/p/how-to-write-your-own-malloc-and-free.html
 
     struct block *current, *previous;
-    int padded_block_size;
 
     while (((current->size) < size) || (((current->in_use) == 1) && (current->next != NULL))) {
         previous = current;
@@ -87,7 +86,7 @@ void *myalloc(int size) {
     // padded_struct_block_size = PADDED_SIZE(sizeof(struct block));
 
     // ... All the machinations to allocate go here ...
-    padded_block_size = PADDED_SIZE(sizeof(struct block));
+    int padded_block_size = PADDED_SIZE(sizeof(struct block));
     return PTR_OFFSET(current, padded_block_size);
 }
 
