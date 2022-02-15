@@ -60,7 +60,8 @@ void *myalloc(int size) {
     //         mark n as used
     //         return address of n's data
 
-    //http://tharikasblogs.blogspot.com/p/how-to-write-your-own-malloc-and-free.html
+    // I used this website to guide the construction of the myalloc method body:
+        //http://tharikasblogs.blogspot.com/p/how-to-write-your-own-malloc-and-free.html
 
     struct block *current, *previous;
     int padded_block_size;
@@ -94,6 +95,8 @@ int main(void){
     void *p;
 
     print_data();
-    p = myalloc(64);
+    p = myalloc(16);
     print_data();
+    p = myalloc(16);
+    printf("%p\n", p);
 }
