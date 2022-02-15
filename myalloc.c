@@ -1,29 +1,32 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define ALIGNMENT 16   // Must be power of 2
-#define GET_PAD(x) ((ALIGNMENT - 1) - ((x) - 1) & (ALIGNMENT - 1))
+#define GET_PAD(x) ((ALIGNMENT - 1) - (((x) - 1) & (ALIGNMENT - 1)))
 #define PADDED_SIZE(x) ((x) + GET_PAD(x))
 #define PTR_OFFSET(p, offset) ((void*)((char *)(p) + (offset)))
 
-int main(void){ // int argc, char *argv[]) {
+// make linked list inside the above data space
+struct block *head = NULL;  // Head of the list, empty
+
+int main(void){ 
     void *p;
 
     print_data();
     p = myalloc(64);
     print_data();
-
-    // print_data();
-    // p = myalloc(16);
-    // print_data();
-    // p = myalloc(16);
-    // printf("%p\n", p);
 }
 
-void myalloc() {
-    void *heap = sbrk(1024);
-    struct block *head = NULL;  // Head of the list, empty
+void *myalloc(int size) {
+    
+    // use sbrk to allocate a chunk of data space
+    // node information:
+            // in-use?
+            // size of allocated memory region
+            // pointer to the next memory region
+
     if (head == NULL) {
         head = sbrk(1024);
         head->next = NULL;
@@ -31,6 +34,27 @@ void myalloc() {
         head->in_use = 0;
     }
 
+    // walk the list looking for a free node
+    //     let n = the free node
+    //     if n's data is big enough for the user request
+    //         mark n as used
+    //         return address of n's data
+
+    //cries into code.. 
+
+    // if there was no room
+    // return NULL
+    return NULL;
+
+    // what we are returning:
+    // malloc will return a pointer to the data.. NOT a pointer to the struct block
+    // the data start at n bytes past the struct, where n is PADDED_SIZE(sizeof(struct block))
+    // padded_struct_block_size = PADDED_SIZE(sizeof(struct block));
+
+    // struct block *cur;
+    // ... All the machinations to allocate go here ...
+    // padded_block_size = PADDED_SIZE(sizeof(struct block));
+    // return PTR_OFFSET(cur, padded_block_size);
 }
 
 struct block {
