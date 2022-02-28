@@ -42,6 +42,7 @@ void print_data(void) {
 void split(struct block *b, size_t size){
 
     struct block *new = PTR_OFFSET(b, size + PADDED_SIZE(sizeof(struct block)));
+    //void*)((void*)fitting_slot+size+sizeof(struct block));
     new->size = (b->size) - size - sizeof(struct block);
     new->in_use = 1;
     new->next = b->next;
@@ -51,8 +52,30 @@ void split(struct block *b, size_t size){
 
 }
 
-void myfree() {
+void myfree(void *p) {
+    char memory[20000];
+    struct block *current, *previous;
 
+    if (((void*) memory <= p) && (p <= (void*)(memory + 20000))) {
+        struct block *current = p;
+        --current;
+        current->in_use=1;
+        
+        // Merge free blocks
+        current = head;
+        while ((current->next) != NULL) {
+            if ((current->in_use) && (current->next->in_use)) {
+                current->size += (current->next->size) + sizeof(struct block);
+                current->next = current->next->next;
+            } else { 
+                previous = current;
+                current = current->next;
+            }
+        }
+
+    } else {
+        printf("Provide value pointer allocated by myalloc\n");
+    }
 }
 
 void *myalloc(size_t size) {
