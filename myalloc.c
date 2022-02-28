@@ -13,7 +13,7 @@ struct block *head = NULL;  // Head of the list, empty
 
 struct block {
         struct block *next;
-        int size;     // Bytes
+        size_t size;     // Bytes
         int in_use;   // Boolean
 } block;
 
@@ -28,7 +28,7 @@ void print_data(void) {
     while (b != NULL) {
         // Uncomment the following line if you want to see the pointer values
         //printf("[%p:%d,%s]", b, b->size, b->in_use? "used": "free");
-        printf("[%d,%s]", b->size, b->in_use? "used": "free");
+        printf("[%ld,%s]", b->size, b->in_use? "used": "free");
         if (b->next != NULL) {
             printf(" -> ");
         }
@@ -39,7 +39,7 @@ void print_data(void) {
     printf("\n");
 }
 
-void split(struct block *b, int size){
+void split(struct block *b, size_t size){
 
     struct block *new = PTR_OFFSET(b, size + PADDED_SIZE(sizeof(struct block)));
     new->size = (b->size) - size - sizeof(struct block);
@@ -52,10 +52,10 @@ void split(struct block *b, int size){
 }
 
 void myfree() {
-    
+
 }
 
-void *myalloc(int size) {
+void *myalloc(size_t size) {
 
     // use sbrk to allocate a chunk of data space
     // node information:
@@ -89,7 +89,8 @@ void *myalloc(int size) {
 
     if ((current->size) == size) {
         current->in_use = 1;
-    } else if ((current->size) > size) {
+    } else if ((current->size) > (size + sizeof(struct block))) {
+        split(current, size);
         current->in_use = 1;
     } else {
         // if there was no room
