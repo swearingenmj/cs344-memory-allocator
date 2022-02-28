@@ -39,6 +39,22 @@ void print_data(void) {
     printf("\n");
 }
 
+void split(struct block *b, int size){
+
+    struct block *new = PTR_OFFSET(b, size + PADDED_SIZE(sizeof(struct block)));
+    new->size = (b->size) - size - sizeof(struct block);
+    new->in_use = 1;
+    new->next = b->next;
+    b->size = size;
+    b->in_use = 0;
+    b->next = new;
+
+}
+
+void myfree() {
+    
+}
+
 void *myalloc(int size) {
 
     // use sbrk to allocate a chunk of data space
@@ -66,6 +82,7 @@ void *myalloc(int size) {
     struct block *current, *previous;
 
     while (((current->size) < size) || (((current->in_use) == 1) && (current->next != NULL))) {
+        current = head;
         previous = current;
         current = current->next;
     }
