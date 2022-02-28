@@ -1,5 +1,5 @@
 CC=gcc
-CCOPTS=-Wall -Wextra -Wno-deprecated-declarations -Wunused-but-set-variable
+CCOPTS=-Wall -Wextra -Wno-deprecated-declarations 
 LIBS=
 
 SRCS=$(wildcard *.c)
