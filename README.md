@@ -1,4 +1,4 @@
-# Project 1: Linked Lists
+# Project 8: Memory Allocator
 
 By Melissa Swearingen
 
